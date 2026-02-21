@@ -168,6 +168,7 @@
             <h1 style="color: #ff4444;">💀 GAME OVER</h1>
             <div id="final-score-display" style="font-size: 24px; margin: 10px;">Score: <span
                     class="score-value">0</span></div>
+            <div style="margin-top: 20px; font-size: 18px;">Nickname:</div>
             <input type="text" id="player-name" placeholder="Enter your name" maxlength="20">
             <button id="submit-btn" class="menu-btn">Submit Score</button>
             <button class="secondary-btn" onclick="location.reload()">Back to Menu</button>
@@ -200,6 +201,7 @@
         let highScore = localStorage.getItem('hanzi_shooter_high_score') || 0;
         let currentChar = "学";
         let currentCharData = null;
+        let generatedPlayerName = "";
         let writer;
         let hpInterval;
 
@@ -356,9 +358,24 @@
             document.getElementById("hp-bar").style.width = hp + "%";
         }
 
+        function generateBeautifulName() {
+            const adjectives = ["Golden", "Emerald", "Mystic", "Azure", "Silent", "Dancing", "Crouching", "Flying", "Crimson", "Radiant", "Zen", "Jade", "Silver", "Imperial", "Wild", "Ocean", "Spirit", "Eternal"];
+            const nouns = ["Dragon", "Phoenix", "Panda", "Lotus", "Ink", "Brush", "Mountain", "River", "Storm", "Tiger", "Crane", "Soul", "Warrior", "Shadow", "Cloud", "Bamboo", "Blade", "Moon"];
+
+            const adj = adjectives[Math.floor(Math.random() * adjectives.length)];
+            const noun = nouns[Math.floor(Math.random() * nouns.length)];
+            const suffix = Math.random().toString(16).substring(2, 6).toUpperCase();
+
+            return `${adj}_${noun}_${suffix}`;
+        }
+
         function gameOver() {
             clearInterval(hpInterval);
             document.getElementById("status").innerText = "💀 Game Over!";
+
+            // Suggest a beautiful name
+            const suggestedName = generateBeautifulName();
+            document.getElementById("player-name").value = suggestedName;
 
             // Show game over overlay
             const overlay = document.getElementById("game-over-screen");
@@ -400,8 +417,7 @@
         }
 
         async function submitScore() {
-            const nameInput = document.getElementById("player-name");
-            const name = nameInput.value.trim() || "Anonymous";
+            const name = document.getElementById("player-name").value.trim() || "Anonymous";
             const submitBtn = document.getElementById("submit-btn");
 
             if (!firebaseConfig.apiKey.startsWith("YOUR")) {
