@@ -169,7 +169,11 @@
             <div id="final-score-display" style="font-size: 24px; margin: 10px;">Score: <span
                     class="score-value">0</span></div>
             <div style="margin-top: 20px; font-size: 18px;">Nickname:</div>
-            <input type="text" id="player-name" placeholder="Enter your name" maxlength="20">
+            <div style="display: flex; align-items: center; justify-content: center; gap: 10px;">
+                <input type="text" id="player-name" placeholder="Enter your name" maxlength="20">
+                <button onclick="refreshName()" title="Random Name"
+                    style="background: none; border: 1px solid #ffcc00; color: #ffcc00; border-radius: 5px; cursor: pointer; padding: 10px;">🎲</button>
+            </div>
             <button id="submit-btn" class="menu-btn">Submit Score</button>
             <button class="secondary-btn" onclick="location.reload()">Back to Menu</button>
         </div>
@@ -369,13 +373,16 @@
             return `${adj}_${noun}_${suffix}`;
         }
 
+        function refreshName() {
+            document.getElementById("player-name").value = generateBeautifulName();
+        }
+
         function gameOver() {
             clearInterval(hpInterval);
             document.getElementById("status").innerText = "💀 Game Over!";
 
             // Suggest a beautiful name
-            const suggestedName = generateBeautifulName();
-            document.getElementById("player-name").value = suggestedName;
+            refreshName();
 
             // Show game over overlay
             const overlay = document.getElementById("game-over-screen");
