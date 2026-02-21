@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Chinese Writer Practice
+    </title>
+
+    <script src="hanzi-writer.min.js"></script>
+
+    <style>
+        body {
+            margin: 0;
+            background: #111;
+            color: white;
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+
+        #game-container {
+            position: relative;
+            width: 100%;
+            height: 100vh;
+        }
+
+        #hp-bar-container {
+            width: 80%;
+            height: 20px;
+            background: #444;
+            margin: 20px auto;
+            border-radius: 10px;
+        }
+
+        #hp-bar {
+            height: 100%;
+            width: 100%;
+            background: limegreen;
+            border-radius: 10px;
+            transition: width 0.2s;
+        }
+
+        #monster {
+            font-size: 80px;
+            margin: 20px;
+        }
+
+        #character-target {
+            margin: 20px auto;
+            width: 200px;
+            height: 200px;
+            background: white;
+            border-radius: 10px;
+        }
+
+        #character-target-1 {
+            margin: 20px auto;
+            width: 200px;
+            height: 200px;
+            background: white;
+            border-radius: 10px;
+        }
+
+        #character-target-1 {
+            margin: 20px auto;
+            width: 200px;
+            height: 200px;
+            background: white;
+            border-radius: 10px;
+        }
+
+        #status {
+            margin-top: 30px;
+            font-size: 18px;
+        }
+
+        #hud {
+            display: flex;
+            justify-content: space-around;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            margin: 10px auto;
+            width: 80%;
+            font-size: 20px;
+            font-weight: bold;
+            color: #ffcc00;
+            text-shadow: 0 0 10px rgba(255, 204, 0, 0.5);
+        }
+
+        .score-value {
+            color: white;
+            margin-left: 5px;
+        }
+
+        /* Overlays */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .menu-btn {
+            background: #ffcc00;
+            color: black;
+            border: none;
+            padding: 15px 40px;
+            font-size: 24px;
+            font-weight: bold;
+            border-radius: 30px;
+            cursor: pointer;
+            margin: 10px;
+            transition: transform 0.2s, background 0.2s;
+        }
+
+        .menu-btn:hover {
+            transform: scale(1.1);
+            background: #ffe066;
+        }
+
+        .secondary-btn {
+            background: transparent;
+            color: #ffcc00;
+            border: 2px solid #ffcc00;
+            padding: 10px 30px;
+            font-size: 18px;
+            border-radius: 20px;
+            cursor: pointer;
+            margin: 10px;
+            text-decoration: none;
+        }
+
+        input[type="text"] {
+            padding: 12px;
+            font-size: 18px;
+            border-radius: 10px;
+            border: none;
+            margin: 20px;
+            width: 250px;
+            text-align: center;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="game-container">
+        <!-- Start Screen -->
+        <div id="start-screen" class="overlay">
+            <h1>⚔ Chinese Writing Training</h1>
+            <button class="menu-btn" onclick="startGame()">PLAY</button>
+            <a href="rank.html" class="secondary-btn">🏆 Leaderboard</a>
+        </div>
+
+        <!-- Game Over Screen -->
+        <div id="game-over-screen" class="overlay hidden">
+            <h1 style="color: #ff4444;">💀 GAME OVER</h1>
+            <div id="final-score-display" style="font-size: 24px; margin: 10px;">Score: <span
+                    class="score-value">0</span></div>
+            <input type="text" id="player-name" placeholder="Enter your name" maxlength="20">
+            <button id="submit-btn" class="menu-btn">Submit Score</button>
+            <button class="secondary-btn" onclick="location.reload()">Back to Menu</button>
+        </div>
+
+        <h1>⚔ Chinese Writing Training</h1>
+
+        <div id="hp-bar-container">
+            <div id="hp-bar"></div>
+        </div>
+
+        <div id="hud">
+            <div>Score: <span id="score" class="score-value">0</span></div>
+            <div>High Score: <span id="high-score" class="score-value">0</span></div>
+        </div>
+
+        <div id="monster">👹</div>
+
+        <div id="character-target"></div>
+
+        <div id="character-target-1"></div>
+
+        <div id="status"></div>
+
+    </div>
+
+    <script>
+        let hp = 100;
+        let score = 0;
+        let highScore = localStorage.getItem('hanzi_shooter_high_score') || 0;
+        let currentChar = "学";
+        let currentCharData = null;
+        let writer;
+        let hpInterval;
+
+        //load dict
+        let dictionary = null;
+        async function loadDictionary() {
+            try {
+                const response = await fetch('hanzi-dictionary.json');
+                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+
+                const data = await response.json();
+
+                if (!data.characters || !Array.isArray(data.characters)) {
+                    throw new Error('Invalid dictionary structure: missing or non-array characters field');
+                }
+
+                dictionary = data.characters;
+                console.log(`✓ Dictionary loaded: ${dictionary.length} characters`);
+                console.log(`  Sample: ${dictionary[0].character} (${dictionary[0].pinyin}) = ${dictionary[0].english}`);
+            } catch (e) {
+                console.error('✗ Dictionary load failed:', e.message);
+                console.log('Using default mode');
+            }
+        }
+
+        async function startGame() {
+            document.getElementById("start-screen").classList.add("hidden");
+            document.getElementById("game-over-screen").classList.add("hidden");
+            await loadDictionary();
+            hp = 100;
+            score = 0;
+            updateHP();
+            updateScoreHUD();
+            await spawnMonster();
+            startHPDrain();
+        }
+
+        function updateScoreHUD() {
+            document.getElementById("score").innerText = score;
+            document.getElementById("high-score").innerText = highScore;
+        }
+
+        function addScore(points) {
+            score += points;
+            if (score > highScore) {
+                highScore = score;
+                localStorage.setItem('hanzi_shooter_high_score', highScore);
+            }
+            updateScoreHUD();
+        }
+
+        async function spawnMonster() {
+            const defaultChars = [
+                { character: "学", pinyin: "xué", english: "study" },
+                { character: "战", pinyin: "zhàn", english: "fight" },
+                { character: "心", pinyin: "xīn", english: "heart" },
+                { character: "爱", pinyin: "ài", english: "love" },
+                { character: "力", pinyin: "lì", english: "strength" },
+                { character: "火", pinyin: "huǒ", english: "fire" }
+            ];
+
+            let pool = defaultChars;
+            if (dictionary && dictionary.length > 0) {
+                // Determine max HSK level based on score: 0-4: HSK1, 5-9: HSK2, etc.
+                const maxHSKLevel = Math.min(6, Math.floor(score / 5) + 1);
+
+                // Inclusive filtering: include all levels from 1 to maxHSKLevel
+                pool = dictionary.filter(char => {
+                    if (!char.difficulty) return false;
+                    const level = parseInt(char.difficulty.replace("HSK", ""));
+                    return level <= maxHSKLevel;
+                });
+
+                if (pool.length === 0) pool = defaultChars;
+            }
+
+            let loaded = false;
+            let retryCount = 0;
+            const maxRetries = 10;
+
+            while (!loaded && retryCount < maxRetries) {
+                currentCharData = pool[Math.floor(Math.random() * pool.length)];
+                currentChar = currentCharData.character;
+
+                try {
+                    await HanziWriter.loadCharacterData(currentChar);
+                    loaded = true;
+                } catch (e) {
+                    console.warn(`⚠️ Character "${currentChar}" not supported by HanziWriter. Skipping...`);
+                    retryCount++;
+                }
+            }
+
+            if (!loaded) {
+                currentCharData = defaultChars[0];
+                currentChar = currentCharData.character;
+            }
+
+            document.getElementById("monster").innerText = "👹 ";
+            document.getElementById("status").innerText = `📖 ${currentCharData.pinyin} (${currentCharData.english})`;
+
+            document.getElementById("character-target").innerHTML = "";
+            document.getElementById("character-target-1").innerHTML = "";
+
+            var writermodel = HanziWriter.create('character-target', currentChar, {
+                width: 200,
+                height: 200,
+                showOutline: true,
+                showCharacter: true
+            });
+
+            writer = HanziWriter.create('character-target-1', currentChar, {
+                width: 200,
+                height: 200,
+                showOutline: false,
+                showCharacter: false,
+                //showCharacter: false,
+                //showOutline: false,
+                showHintAfterMisses: 3,
+                highlightOnComplete: false,
+            });
+
+            writer.quiz({
+                onComplete: async function () {
+                    document.getElementById("status").innerText = "🔥 Quái bị tiêu diệt!";
+                    addScore(1);
+                    hp = 100;
+                    updateHP();
+                    await spawnMonster();
+                },
+                onMistake: function () {
+                    reduceHP(5);
+                }
+            });
+        }
+
+        function startHPDrain() {
+            clearInterval(hpInterval);
+            hpInterval = setInterval(() => {
+                reduceHP(1);
+            }, 300);
+        }
+
+        function reduceHP(amount) {
+            hp -= amount;
+            if (hp <= 0) {
+                hp = 0;
+                gameOver();
+            }
+            updateHP();
+        }
+
+        function updateHP() {
+            document.getElementById("hp-bar").style.width = hp + "%";
+        }
+
+        function gameOver() {
+            clearInterval(hpInterval);
+            document.getElementById("status").innerText = "💀 Game Over!";
+
+            // Show game over overlay
+            const overlay = document.getElementById("game-over-screen");
+            overlay.classList.remove("hidden");
+            overlay.querySelector("#final-score-display span").innerText = score;
+        }
+
+        // Removed auto-start: startGame();
+    </script>
+
+    <!-- Firebase SDK (Modular) -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyDDi_bKIWk2J4JlV7Hr5FPvGG5uMLX7qZc",
+            authDomain: "chinese-writer-14f9a.firebaseapp.com",
+            projectId: "chinese-writer-14f9a",
+            storageBucket: "chinese-writer-14f9a.firebasestorage.app",
+            messagingSenderId: "172568786390",
+            appId: "1:172568786390:web:d388025c7289b71bff2077",
+            measurementId: "G-67QE12KPHW"
+        };
+
+        // Initialize Firebase
+        let db;
+        try {
+            const app = initializeApp(firebaseConfig);
+            db = getFirestore(app);
+        } catch (e) {
+            console.error("Firebase initialization failed", e);
+        }
+
+        // Basic Anti-Cheat: Verification Token
+        function generateToken(s, n) {
+            return btoa(s + "_" + n + "_" + "H4nzi_S4lt");
+        }
+
+        async function submitScore() {
+            const nameInput = document.getElementById("player-name");
+            const name = nameInput.value.trim() || "Anonymous";
+            const submitBtn = document.getElementById("submit-btn");
+
+            if (!firebaseConfig.apiKey.startsWith("YOUR")) {
+                if (!db) {
+                    alert("Firebase not initialized correctly.");
+                    return;
+                }
+
+                try {
+                    submitBtn.disabled = true;
+                    submitBtn.innerText = "Submitting...";
+
+                    await addDoc(collection(db, "scores"), {
+                        name: name,
+                        score: parseInt(score),
+                        timestamp: serverTimestamp(),
+                        token: generateToken(score, name)
+                    });
+
+                    alert("Score submitted successfully!");
+                    location.reload();
+                } catch (error) {
+                    console.error("Error adding document: ", error);
+                    alert("Error submitting score. Please try again.");
+                    submitBtn.disabled = false;
+                    submitBtn.innerText = "Submit Score";
+                }
+            } else {
+                alert("Firebase not configured. Score was not saved to online leaderboard.");
+                location.reload();
+            }
+        }
+
+        document.getElementById("submit-btn").addEventListener("click", submitScore);
+    </script>
+</body>
+
+</html>

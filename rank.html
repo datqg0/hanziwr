@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Leaderboard - Chinese Shooter Game</title>
+    <style>
+        body {
+            margin: 0;
+            background: #111;
+            color: white;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            padding-top: 50px;
+        }
+
+        h1 {
+            color: #ffcc00;
+            font-size: 36px;
+            text-shadow: 0 0 15px rgba(255, 204, 0, 0.4);
+            margin-bottom: 30px;
+        }
+
+        .leaderboard-container {
+            width: 90%;
+            max-width: 500px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 204, 0, 0.2);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 20px;
+        }
+
+        th {
+            padding: 15px;
+            border-bottom: 2px solid #ffcc00;
+            color: #ffcc00;
+        }
+
+        td {
+            padding: 12px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .rank-1 {
+            color: #ffd700;
+            font-weight: bold;
+        }
+
+        /* Gold */
+        .rank-2 {
+            color: #c0c0c0;
+            font-weight: bold;
+        }
+
+        /* Silver */
+        .rank-3 {
+            color: #cd7f32;
+            font-weight: bold;
+        }
+
+        /* Bronze */
+
+        .score-val {
+            font-family: monospace;
+            font-weight: bold;
+            color: #ffcc00;
+        }
+
+        .btn {
+            background: transparent;
+            color: #ffcc00;
+            border: 2px solid #ffcc00;
+            padding: 12px 30px;
+            font-size: 18px;
+            font-weight: bold;
+            border-radius: 30px;
+            cursor: pointer;
+            margin-top: 40px;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+
+        .btn:hover {
+            background: #ffcc00;
+            color: black;
+            box-shadow: 0 0 20px rgba(255, 204, 0, 0.3);
+        }
+
+        #loading {
+            margin: 20px;
+            color: #888;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>🏆 GLOBAL RANKING</h1>
+
+    <div class="leaderboard-container">
+        <div id="loading">Loading scores...</div>
+        <table id="rank-table" class="hidden">
+            <thead>
+                <tr>
+                    <th>Rank</th>
+                    <th>Player</th>
+                    <th>Score</th>
+                </tr>
+            </thead>
+            <tbody id="leaderboard-body">
+                <!-- Data will be injected here -->
+            </tbody>
+        </table>
+    </div>
+
+    <a href="index.html" class="btn">BACK TO MENU</a>
+
+    <!-- Firebase SDK (Modular) -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore, collection, query, orderBy, limit, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyDDi_bKIWk2J4JlV7Hr5FPvGG5uMLX7qZc",
+            authDomain: "chinese-writer-14f9a.firebaseapp.com",
+            projectId: "chinese-writer-14f9a",
+            storageBucket: "chinese-writer-14f9a.firebasestorage.app",
+            messagingSenderId: "172568786390",
+            appId: "1:172568786390:web:d388025c7289b71bff2077",
+            measurementId: "G-67QE12KPHW"
+        };
+
+        // Initialize Firebase
+        let db;
+        try {
+            const app = initializeApp(firebaseConfig);
+            db = getFirestore(app);
+            loadLeaderboard();
+        } catch (e) {
+            console.error("Firebase initialization failed", e);
+            document.getElementById("loading").innerText = "Error: Check your Firebase Config";
+        }
+
+        async function loadLeaderboard() {
+            try {
+                const scoresRef = collection(db, "scores");
+                const q = query(scoresRef, orderBy("score", "desc"), limit(10));
+                const querySnapshot = await getDocs(q);
+
+                const tableBody = document.getElementById("leaderboard-body");
+                tableBody.innerHTML = "";
+
+                let rank = 1;
+                querySnapshot.forEach((doc) => {
+                    const data = doc.data();
+                    const row = document.createElement("tr");
+
+                    let rankClass = "";
+                    if (rank === 1) rankClass = "rank-1";
+                    else if (rank === 2) rankClass = "rank-2";
+                    else if (rank === 3) rankClass = "rank-3";
+
+                    row.innerHTML = `
+                        <td class="${rankClass}">#${rank}</td>
+                        <td>${data.name || "Anonymous"}</td>
+                        <td class="score-val">${data.score}</td>
+                    `;
+                    tableBody.appendChild(row);
+                    rank++;
+                });
+
+                document.getElementById("loading").style.display = "none";
+                document.getElementById("rank-table").style.display = "table";
+            } catch (error) {
+                console.error("Error fetching leaderboard: ", error);
+                document.getElementById("loading").innerText = "Failed to load scores.";
+            }
+        }
+    </script>
+</body>
+
+</html>
