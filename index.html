@@ -21,7 +21,10 @@
         #game-container {
             position: relative;
             width: 100%;
-            height: 100vh;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
         }
 
         #hp-bar-container {
@@ -42,7 +45,25 @@
 
         #monster {
             font-size: 80px;
-            margin: 20px;
+            margin: 15px auto 10px auto;
+            min-height: 90px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        #monster-icon {
+            font-size: 80px;
+            line-height: 1;
+        }
+
+        #monster-text {
+            font-size: 18px;
+            color: #ff6b6b;
+            font-weight: bold;
+            text-shadow: 0 0 10px rgba(255, 107, 107, 0.5);
         }
 
         #character-target {
@@ -159,6 +180,7 @@
                 height: auto;
                 min-height: 100vh;
                 padding: 10px 0;
+                overflow-y: auto;
             }
 
             #hp-bar-container {
@@ -178,14 +200,25 @@
 
             #monster {
                 font-size: 50px;
-                margin: 15px;
+                margin: 12px auto 8px auto;
+                min-height: 70px;
+            }
+
+            #monster-icon {
+                font-size: 50px;
+            }
+
+            #monster-text {
+                font-size: 14px;
             }
 
             #character-target,
             #character-target-1 {
                 margin: 10px auto;
-                width: 150px;
-                height: 150px;
+                width: 85vw;
+                height: 85vw;
+                max-width: 450px;
+                max-height: 450px;
             }
 
             #status {
@@ -242,13 +275,24 @@
 
             #monster {
                 font-size: 40px;
-                margin: 10px;
+                margin: 10px auto 6px auto;
+                min-height: 60px;
+            }
+
+            #monster-icon {
+                font-size: 40px;
+            }
+
+            #monster-text {
+                font-size: 12px;
             }
 
             #character-target,
             #character-target-1 {
-                width: 120px;
-                height: 120px;
+                width: 90vw;
+                height: 90vw;
+                max-width: 380px;
+                max-height: 380px;
                 margin: 8px auto;
             }
 
@@ -319,7 +363,10 @@
             <div>High Score: <span id="high-score" class="score-value">0</span></div>
         </div>
 
-        <div id="monster">👹</div>
+        <div id="monster">
+            <div id="monster-icon">👹</div>
+            <div id="monster-text">Come on!</div>
+        </div>
 
         <div id="character-target"></div>
 
@@ -338,6 +385,18 @@
         let generatedPlayerName = "";
         let writer;
         let hpInterval;
+
+        // Monster icons và chữ cổ vũ
+        const monsterIcons = ['🐉', '🐲', '🦕', '🐢', '🦑', '🐙', '👾', '🤖', '👻', '🎃', '🦖', '🦗', '🦂', '🕷️', '🦗', '🦄', '🦋', '🐝', '🦅', '🦉'];
+        const cheeringTexts = ['Come on!', 'You got this!', 'Go go go!', 'Hãy lên!', 'Cố lên!', 'Bạn làm được!', 'Xuất sắc!', 'Tuyệt vời!', 'Keep going!', 'Crush it!', 'Easy!', 'Bạn đẳng cấp!', 'Thần tốc!', 'Siêu nhân!'];
+
+        function getRandomMonsterIcon() {
+            return monsterIcons[Math.floor(Math.random() * monsterIcons.length)];
+        }
+
+        function getRandomCheeringText() {
+            return cheeringTexts[Math.floor(Math.random() * cheeringTexts.length)];
+        }
 
         //load dict
         let dictionary = null;
@@ -434,18 +493,20 @@
                 currentChar = currentCharData.character;
             }
 
-            document.getElementById("monster").innerText = "👹 ";
+            document.getElementById("monster").innerHTML = `<div id="monster-icon">${getRandomMonsterIcon()}</div><div id="monster-text">${getRandomCheeringText()}</div>`;
             document.getElementById("status").innerText = `📖 ${currentCharData.pinyin} (${currentCharData.english})`;
 
             document.getElementById("character-target").innerHTML = "";
             document.getElementById("character-target-1").innerHTML = "";
 
-            // Responsive canvas size
+            // Responsive canvas size based on viewport
             let canvasSize = 200;
-            if (window.innerWidth <= 480) {
-                canvasSize = 120;
-            } else if (window.innerWidth <= 768) {
-                canvasSize = 150;
+            let viewport = window.innerWidth;
+            
+            if (viewport <= 480) {
+                canvasSize = Math.min(Math.floor(viewport * 0.9), 380);
+            } else if (viewport <= 768) {
+                canvasSize = Math.min(Math.floor(viewport * 0.85), 450);
             }
 
             var writermodel = HanziWriter.create('character-target', currentChar, {
@@ -468,7 +529,7 @@
 
             writer.quiz({
                 onComplete: async function () {
-                    document.getElementById("status").innerText = "🔥 Quái bị tiêu diệt!";
+                    document.getElementById("status").innerText = `🔥 ${getRandomCheeringText()}`;
                     addScore(1);
                     hp = 100;
                     updateHP();
@@ -582,7 +643,7 @@
                         token: generateToken(score, name)
                     });
 
-                    alert("Score submitted successfully!");
+                    alert("Lưu điểm thành công vào bảng rank để xem nhé!");
                     location.reload();
                 } catch (error) {
                     console.error("Error adding document: ", error);
