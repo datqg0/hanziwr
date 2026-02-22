@@ -3,6 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chinese Writer Practice
     </title>
 
@@ -45,7 +46,7 @@
         }
 
         #character-target {
-            margin: 20px auto;
+            margin: 15px auto;
             width: 200px;
             height: 200px;
             background: white;
@@ -53,15 +54,7 @@
         }
 
         #character-target-1 {
-            margin: 20px auto;
-            width: 200px;
-            height: 200px;
-            background: white;
-            border-radius: 10px;
-        }
-
-        #character-target-1 {
-            margin: 20px auto;
+            margin: 15px auto;
             width: 200px;
             height: 200px;
             background: white;
@@ -149,6 +142,143 @@
 
         .hidden {
             display: none !important;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            body {
+                font-size: 14px;
+            }
+
+            h1 {
+                font-size: 24px;
+                margin: 15px 0;
+            }
+
+            #game-container {
+                height: auto;
+                min-height: 100vh;
+                padding: 10px 0;
+            }
+
+            #hp-bar-container {
+                width: 90%;
+                height: 16px;
+                margin: 15px auto;
+            }
+
+            #hud {
+                width: 90%;
+                margin: 10px auto;
+                padding: 8px;
+                flex-direction: column;
+                gap: 8px;
+                font-size: 16px;
+            }
+
+            #monster {
+                font-size: 50px;
+                margin: 15px;
+            }
+
+            #character-target,
+            #character-target-1 {
+                margin: 10px auto;
+                width: 150px;
+                height: 150px;
+            }
+
+            #status {
+                margin-top: 15px;
+                font-size: 14px;
+            }
+
+            .menu-btn {
+                padding: 12px 30px;
+                font-size: 18px;
+                margin: 8px;
+            }
+
+            .secondary-btn {
+                padding: 8px 20px;
+                font-size: 14px;
+                margin: 8px;
+            }
+
+            input[type="text"] {
+                width: 200px;
+                padding: 10px;
+                font-size: 16px;
+                margin: 10px;
+            }
+
+            #final-score-display {
+                font-size: 18px !important;
+            }
+
+            .overlay > div {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 20px;
+                margin: 10px 0;
+            }
+
+            #hp-bar-container {
+                width: 95%;
+                height: 14px;
+                margin: 10px auto;
+            }
+
+            #hud {
+                width: 95%;
+                font-size: 14px;
+                padding: 6px;
+                gap: 6px;
+            }
+
+            #monster {
+                font-size: 40px;
+                margin: 10px;
+            }
+
+            #character-target,
+            #character-target-1 {
+                width: 120px;
+                height: 120px;
+                margin: 8px auto;
+            }
+
+            #status {
+                font-size: 12px;
+                margin: 10px 0;
+            }
+
+            .menu-btn {
+                padding: 10px 20px;
+                font-size: 16px;
+                margin: 6px;
+            }
+
+            .secondary-btn {
+                padding: 8px 16px;
+                font-size: 12px;
+                margin: 6px;
+            }
+
+            input[type="text"] {
+                width: 160px;
+                padding: 8px;
+                font-size: 14px;
+                margin: 8px;
+            }
+
+            #game-container {
+                padding: 5px 0;
+            }
         }
     </style>
 </head>
@@ -310,16 +440,24 @@
             document.getElementById("character-target").innerHTML = "";
             document.getElementById("character-target-1").innerHTML = "";
 
+            // Responsive canvas size
+            let canvasSize = 200;
+            if (window.innerWidth <= 480) {
+                canvasSize = 120;
+            } else if (window.innerWidth <= 768) {
+                canvasSize = 150;
+            }
+
             var writermodel = HanziWriter.create('character-target', currentChar, {
-                width: 200,
-                height: 200,
+                width: canvasSize,
+                height: canvasSize,
                 showOutline: true,
                 showCharacter: true
             });
 
             writer = HanziWriter.create('character-target-1', currentChar, {
-                width: 200,
-                height: 200,
+                width: canvasSize,
+                height: canvasSize,
                 showOutline: false,
                 showCharacter: false,
                 //showCharacter: false,
