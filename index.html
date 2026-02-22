@@ -25,6 +25,7 @@
             display: flex;
             flex-direction: column;
             overflow-y: auto;
+            box-sizing: border-box;
         }
 
         #hp-bar-container {
@@ -172,58 +173,69 @@
             }
 
             h1 {
-                font-size: 24px;
-                margin: 15px 0;
+                font-size: 18px;
+                margin: 5px 0;
+                flex-shrink: 0;
             }
 
             #game-container {
-                height: auto;
-                min-height: 100vh;
-                padding: 10px 0;
-                overflow-y: auto;
+                height: 100vh;
+                padding: 5px 0;
+                overflow: hidden;
+                box-sizing: border-box;
             }
 
             #hp-bar-container {
-                width: 90%;
-                height: 16px;
-                margin: 15px auto;
+                width: 85%;
+                height: 12px;
+                margin: 5px auto;
+                flex-shrink: 0;
             }
 
             #hud {
-                width: 90%;
-                margin: 10px auto;
-                padding: 8px;
-                flex-direction: column;
-                gap: 8px;
-                font-size: 16px;
+                width: 85%;
+                margin: 4px auto;
+                padding: 5px;
+                flex-direction: row;
+                gap: 5px;
+                font-size: 13px;
+                flex-shrink: 0;
             }
 
             #monster {
-                font-size: 50px;
-                margin: 12px auto 8px auto;
-                min-height: 70px;
+                font-size: 40px;
+                margin: 5px auto 3px auto;
+                min-height: 50px;
+                gap: 5px;
+                flex-shrink: 0;
             }
 
             #monster-icon {
-                font-size: 50px;
+                font-size: 40px;
+                line-height: 1;
             }
 
             #monster-text {
-                font-size: 14px;
+                font-size: 11px;
             }
 
             #character-target,
             #character-target-1 {
-                margin: 10px auto;
-                width: 85vw;
-                height: 85vw;
-                max-width: 450px;
-                max-height: 450px;
+                margin: 4px auto;
+                width: 80vw;
+                height: 80vw;
+                max-width: 280px;
+                max-height: 280px;
+                flex-grow: 1;
+                flex-shrink: 1;
+                min-height: 100px;
             }
 
             #status {
-                margin-top: 15px;
-                font-size: 14px;
+                margin-top: 3px;
+                margin-bottom: 5px;
+                font-size: 12px;
+                flex-shrink: 0;
             }
 
             .menu-btn {
@@ -256,49 +268,59 @@
 
         @media (max-width: 480px) {
             h1 {
-                font-size: 20px;
-                margin: 10px 0;
+                font-size: 16px;
+                margin: 3px 0;
+                flex-shrink: 0;
             }
 
             #hp-bar-container {
-                width: 95%;
-                height: 14px;
-                margin: 10px auto;
+                width: 90%;
+                height: 10px;
+                margin: 3px auto;
+                flex-shrink: 0;
             }
 
             #hud {
-                width: 95%;
-                font-size: 14px;
-                padding: 6px;
-                gap: 6px;
+                width: 90%;
+                font-size: 12px;
+                padding: 4px;
+                gap: 4px;
+                flex-shrink: 0;
             }
 
             #monster {
-                font-size: 40px;
-                margin: 10px auto 6px auto;
-                min-height: 60px;
+                font-size: 35px;
+                margin: 3px auto 2px auto;
+                min-height: 45px;
+                gap: 3px;
+                flex-shrink: 0;
             }
 
             #monster-icon {
-                font-size: 40px;
+                font-size: 35px;
+                line-height: 1;
             }
 
             #monster-text {
-                font-size: 12px;
+                font-size: 10px;
             }
 
             #character-target,
             #character-target-1 {
-                width: 90vw;
-                height: 90vw;
-                max-width: 380px;
-                max-height: 380px;
-                margin: 8px auto;
+                width: 85vw;
+                height: 85vw;
+                max-width: 240px;
+                max-height: 240px;
+                margin: 3px auto;
+                flex-grow: 1;
+                flex-shrink: 1;
+                min-height: 80px;
             }
 
             #status {
-                font-size: 12px;
-                margin: 10px 0;
+                font-size: 10px;
+                margin: 2px 0 3px 0;
+                flex-shrink: 0;
             }
 
             .menu-btn {
@@ -499,14 +521,21 @@
             document.getElementById("character-target").innerHTML = "";
             document.getElementById("character-target-1").innerHTML = "";
 
-            // Responsive canvas size based on viewport
+            // Responsive canvas size based on viewport (width and height)
             let canvasSize = 200;
-            let viewport = window.innerWidth;
+            let vw = window.innerWidth;
+            let vh = window.innerHeight;
             
-            if (viewport <= 480) {
-                canvasSize = Math.min(Math.floor(viewport * 0.9), 380);
-            } else if (viewport <= 768) {
-                canvasSize = Math.min(Math.floor(viewport * 0.85), 450);
+            if (vw <= 480) {
+                // Mobile: fit to screen with some margin
+                let sizeFromWidth = Math.floor(vw * 0.85);
+                let sizeFromHeight = Math.floor((vh - 220) / 2); // Rough estimate: 220px for other elements
+                canvasSize = Math.min(sizeFromWidth, sizeFromHeight, 240);
+            } else if (vw <= 768) {
+                // Tablet
+                let sizeFromWidth = Math.floor(vw * 0.8);
+                let sizeFromHeight = Math.floor((vh - 200) / 2);
+                canvasSize = Math.min(sizeFromWidth, sizeFromHeight, 280);
             }
 
             var writermodel = HanziWriter.create('character-target', currentChar, {
