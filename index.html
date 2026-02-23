@@ -4,9 +4,9 @@
 <head>
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-GKT0DLRM43"></script>
-        <script>
+    <script>
         window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
+        function gtag() { dataLayer.push(arguments); }
         gtag('js', new Date());
 
         gtag('config', 'G-GKT0DLRM43');
@@ -51,43 +51,27 @@
             background: limegreen;
             border-radius: 10px;
             transition: width 0.2s;
-        }
-
-        #monster {
-            font-size: 80px;
-            margin: 15px auto 10px auto;
-            min-height: 90px;
             display: flex;
-            flex-direction: column;
             align-items: center;
             justify-content: center;
-            gap: 10px;
-        }
-
-        #monster-icon {
-            font-size: 80px;
-            line-height: 1;
-        }
-
-        #monster-text {
-            font-size: 18px;
-            color: #ff6b6b;
             font-weight: bold;
-            text-shadow: 0 0 10px rgba(255, 107, 107, 0.5);
+            font-size: 12px;
+            color: black;
+            position: relative;
         }
 
         #character-target {
             margin: 15px auto;
-            width: 200px;
-            height: 200px;
+            width: 380px;
+            height: 380px;
             background: white;
             border-radius: 10px;
         }
 
         #character-target-1 {
             margin: 15px auto;
-            width: 200px;
-            height: 200px;
+            width: 300px;
+            height: 300px;
             background: white;
             border-radius: 10px;
         }
@@ -211,30 +195,13 @@
                 flex-shrink: 0;
             }
 
-            #monster {
-                font-size: 40px;
-                margin: 5px auto 3px auto;
-                min-height: 50px;
-                gap: 5px;
-                flex-shrink: 0;
-            }
-
-            #monster-icon {
-                font-size: 40px;
-                line-height: 1;
-            }
-
-            #monster-text {
-                font-size: 11px;
-            }
-
             #character-target,
             #character-target-1 {
                 margin: 4px auto;
                 width: 80vw;
                 height: 80vw;
-                max-width: 280px;
-                max-height: 280px;
+                max-width: 380px;
+                max-height: 380px;
                 flex-grow: 1;
                 flex-shrink: 1;
                 min-height: 100px;
@@ -270,7 +237,7 @@
                 font-size: 18px !important;
             }
 
-            .overlay > div {
+            .overlay>div {
                 width: 100%;
             }
         }
@@ -297,29 +264,12 @@
                 flex-shrink: 0;
             }
 
-            #monster {
-                font-size: 35px;
-                margin: 3px auto 2px auto;
-                min-height: 45px;
-                gap: 3px;
-                flex-shrink: 0;
-            }
-
-            #monster-icon {
-                font-size: 35px;
-                line-height: 1;
-            }
-
-            #monster-text {
-                font-size: 10px;
-            }
-
             #character-target,
             #character-target-1 {
                 width: 85vw;
                 height: 85vw;
-                max-width: 240px;
-                max-height: 240px;
+                max-width: 300px;
+                max-height: 300px;
                 margin: 3px auto;
                 flex-grow: 1;
                 flex-shrink: 1;
@@ -386,17 +336,14 @@
         <h1>Luyện viết chữ Hán</h1>
 
         <div id="hp-bar-container">
-            <div id="hp-bar"></div>
+            <div id="hp-bar">
+                <span id="hp-text">100%</span>
+            </div>
         </div>
 
         <div id="hud">
             <div>Score: <span id="score" class="score-value">0</span></div>
             <div>High Score: <span id="high-score" class="score-value">0</span></div>
-        </div>
-
-        <div id="monster">
-            <div id="monster-icon">👹</div>
-            <div id="monster-text">Come on!</div>
         </div>
 
         <div id="character-target"></div>
@@ -409,6 +356,7 @@
 
     <script>
         let hp = 100;
+        let maxHP = 100;
         let score = 0;
         let highScore = localStorage.getItem('hanzi_shooter_high_score') || 0;
         let currentChar = "学";
@@ -417,13 +365,8 @@
         let writer;
         let hpInterval;
 
-        // Monster icons và chữ cổ vũ
-        const monsterIcons = ['🐉', '🐲', '🦕', '🐢', '🦑', '🐙', '👾', '🤖', '👻', '🎃', '🦖', '🦗', '🦂', '🕷️', '🦗', '🦄', '🦋', '🐝', '🦅', '🦉'];
+        // Chữ cổ vũ
         const cheeringTexts = ['Nào chiến thôi!', 'Bạn làm được mà!', 'Go go go!', 'Hãy lên!', 'Cố lên!', 'Bạn làm được!', 'Xuất sắc!', 'Tuyệt vời!', 'Keep going!', 'Crush it!', 'Easy!', 'Bạn đẳng cấp!', 'Thần tốc!', 'Siêu nhân!'];
-
-        function getRandomMonsterIcon() {
-            return monsterIcons[Math.floor(Math.random() * monsterIcons.length)];
-        }
 
         function getRandomCheeringText() {
             return cheeringTexts[Math.floor(Math.random() * cheeringTexts.length)];
@@ -431,9 +374,12 @@
 
         //load dict
         let dictionary = null;
+        let currentCharacters = [];
+        let currentCharIndex = 0;
         async function loadDictionary() {
             try {
-                const response = await fetch('hanzi-dictionary.json');
+                //const response = await fetch('hanzi-dictionary-full.json');
+                const response = await fetch('test.json');
                 if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
 
                 const data = await response.json();
@@ -456,6 +402,7 @@
             document.getElementById("game-over-screen").classList.add("hidden");
             await loadDictionary();
             hp = 100;
+            maxHP = 100;
             score = 0;
             updateHP();
             updateScoreHUD();
@@ -475,6 +422,78 @@
                 localStorage.setItem('hanzi_shooter_high_score', highScore);
             }
             updateScoreHUD();
+        }
+
+        async function validateWord(word) {
+            const chars = word.split('');
+            const validChars = [];
+
+            for (let char of chars) {
+                try {
+                    await HanziWriter.loadCharacterData(char);
+                    validChars.push(char);
+                } catch (e) {
+                    console.warn(`⚠️ Character "${char}" not supported`);
+                }
+            }
+
+            return validChars;
+        }
+
+        function createWriterForCurrentChar(canvasSize) {
+            // Clear the writing area
+            document.getElementById("character-target-1").innerHTML = "";
+
+            const currentWriteChar = currentCharacters[currentCharIndex];
+            writer = HanziWriter.create('character-target-1', currentWriteChar, {
+                width: canvasSize,
+                height: canvasSize,
+                showOutline: false,
+                showCharacter: false,
+                showHintAfterMisses: 3,
+                highlightOnComplete: false,
+                drawingWidth: 20
+            });
+
+            writer.quiz({
+                onComplete: async function () {
+                    currentCharIndex++;
+
+                    if (currentCharIndex < currentCharacters.length) {
+                        // Move to next character - update status and preview
+                        document.getElementById("status").innerText = `📖 Chữ ${currentCharIndex + 1}/${currentCharacters.length}`;
+
+                        // Update highlight in preview grid
+                        for (let i = 0; i < currentCharacters.length; i++) {
+                            const previewDiv = document.getElementById(`char-preview-${i}`);
+                            if (i === currentCharIndex) {
+                                previewDiv.style.background = '#ffff99';
+                                previewDiv.style.border = '3px solid #ffcc00';
+                            } else if (i < currentCharIndex) {
+                                previewDiv.style.background = '#ccffcc';
+                                previewDiv.style.border = '2px solid #00cc00';
+                            } else {
+                                previewDiv.style.background = 'white';
+                                previewDiv.style.border = '1px solid #ccc';
+                            }
+                        }
+
+                        // Create writer for next character
+                        createWriterForCurrentChar(canvasSize);
+                    } else {
+                        // All characters completed - move to next word
+                        document.getElementById("status").innerText = `🔥 ${getRandomCheeringText()}`;
+                        addScore(currentCharacters.length);
+                        hp = 100;
+                        maxHP = 100;
+                        updateHP();
+                        await spawnMonster();
+                    }
+                },
+                onMistake: function () {
+                    reduceHP(5);
+                }
+            });
         }
 
         async function spawnMonster() {
@@ -510,11 +529,15 @@
                 currentCharData = pool[Math.floor(Math.random() * pool.length)];
                 currentChar = currentCharData.character;
 
-                try {
-                    await HanziWriter.loadCharacterData(currentChar);
+                // Validate word by checking if all characters are supported
+                const validChars = await validateWord(currentChar);
+
+                if (validChars.length === currentChar.length && validChars.length > 0) {
+                    currentCharacters = validChars;
+                    currentCharIndex = 0;
                     loaded = true;
-                } catch (e) {
-                    console.warn(`⚠️ Character "${currentChar}" not supported by HanziWriter. Skipping...`);
+                } else {
+                    console.warn(`⚠️ Word "${currentChar}" has unsupported characters. Skipping...`);
                     retryCount++;
                 }
             }
@@ -522,61 +545,106 @@
             if (!loaded) {
                 currentCharData = defaultChars[0];
                 currentChar = currentCharData.character;
+                currentCharacters = [currentChar];
+                currentCharIndex = 0;
             }
 
-            document.getElementById("monster").innerHTML = `<div id="monster-icon">${getRandomMonsterIcon()}</div><div id="monster-text">${getRandomCheeringText()}</div>`;
             document.getElementById("status").innerText = `📖 ${currentCharData.pinyin} (${currentCharData.english})`;
+
+            // Set HP based on number of characters
+            if (currentCharacters.length === 1) {
+                hp = 100;
+                maxHP = 100;
+            } else if (currentCharacters.length === 2) {
+                hp = 300;
+                maxHP = 300;
+            } else if (currentCharacters.length === 3) {
+                hp = 400;
+                maxHP = 400;
+            }
+            updateHP();
 
             document.getElementById("character-target").innerHTML = "";
             document.getElementById("character-target-1").innerHTML = "";
 
             // Responsive canvas size based on viewport (width and height)
-            let canvasSize = 200;
             let vw = window.innerWidth;
             let vh = window.innerHeight;
-            
-            if (vw <= 480) {
-                // Mobile: fit to screen with some margin
-                let sizeFromWidth = Math.floor(vw * 0.85);
-                let sizeFromHeight = Math.floor((vh - 220) / 2); // Rough estimate: 220px for other elements
-                canvasSize = Math.min(sizeFromWidth, sizeFromHeight, 240);
-            } else if (vw <= 768) {
-                // Tablet
-                let sizeFromWidth = Math.floor(vw * 0.8);
-                let sizeFromHeight = Math.floor((vh - 200) / 2);
-                canvasSize = Math.min(sizeFromWidth, sizeFromHeight, 280);
+
+            // Calculate a fluid canvasSize based on viewport
+            // For 3+ characters, we reduce the scale to make sure everything fits vertically
+            let heightLimitMultiplier = currentCharacters.length >= 3 ? 0.28 : 0.35;
+            let widthLimitMultiplier = 0.75;
+
+            let canvasSize = Math.min(vw * widthLimitMultiplier, vh * heightLimitMultiplier);
+
+            // Constrain canvasSize to reasonable limits
+            if (vw > 768) {
+                canvasSize = Math.min(canvasSize, 380);
+            } else {
+                // Minimum size depends on count: 3+ chars need smaller minimums to fit
+                let minSize = currentCharacters.length >= 3 ? 150 : 180;
+                canvasSize = Math.max(canvasSize, minSize);
             }
 
-            var writermodel = HanziWriter.create('character-target', currentChar, {
-                width: canvasSize,
-                height: canvasSize,
-                showOutline: true,
-                showCharacter: true
-            });
+            // Setup character preview and reference
+            if (currentCharacters.length === 1) {
+                // Single character - show as reference
+                const charContainer = document.getElementById("character-target");
+                charContainer.style.display = "block";
+                charContainer.style.width = canvasSize + "px";
+                charContainer.style.height = canvasSize + "px";
+                charContainer.style.margin = "15px auto";
+                charContainer.style.background = "white";
+                charContainer.style.borderRadius = "10px";
+                charContainer.style.padding = "0";
+                charContainer.style.overflow = "hidden";
 
-            writer = HanziWriter.create('character-target-1', currentChar, {
-                width: canvasSize,
-                height: canvasSize,
-                showOutline: false,
-                showCharacter: false,
-                //showCharacter: false,
-                //showOutline: false,
-                showHintAfterMisses: 3,
-                highlightOnComplete: false,
-            });
+                HanziWriter.create('character-target', currentChar, {
+                    width: canvasSize,
+                    height: canvasSize,
+                    showOutline: true,
+                    showCharacter: true,
+                    drawingWidth: 20
+                });
+            } else {
+                // Multiple characters - show grid
+                const gridContainer = document.getElementById("character-target");
+                gridContainer.style.display = "flex";
+                gridContainer.style.flexWrap = "wrap";
+                gridContainer.style.justifyContent = "center";
+                gridContainer.style.alignItems = "center";
+                gridContainer.style.width = "100%";
+                gridContainer.style.height = "auto";
+                gridContainer.style.padding = "10px";
+                gridContainer.style.gap = "10px";
+                gridContainer.style.background = "transparent";
+                gridContainer.style.borderRadius = "0";
 
-            writer.quiz({
-                onComplete: async function () {
-                    document.getElementById("status").innerText = `🔥 ${getRandomCheeringText()}`;
-                    addScore(1);
-                    hp = 100;
-                    updateHP();
-                    await spawnMonster();
-                },
-                onMistake: function () {
-                    reduceHP(5);
-                }
-            });
+                const smallCanvasSize = Math.floor(canvasSize * 0.45);
+                currentCharacters.forEach((char, index) => {
+                    const charDiv = document.createElement('div');
+                    charDiv.id = `char-preview-${index}`;
+                    charDiv.style.width = smallCanvasSize + 'px';
+                    charDiv.style.height = smallCanvasSize + 'px';
+                    charDiv.style.background = index === currentCharIndex ? '#ffff99' : 'white';
+                    charDiv.style.padding = '5px';
+                    charDiv.style.borderRadius = '5px';
+                    charDiv.style.border = index === currentCharIndex ? '3px solid #ffcc00' : '1px solid #ccc';
+                    gridContainer.appendChild(charDiv);
+
+                    HanziWriter.create(`char-preview-${index}`, char, {
+                        width: smallCanvasSize - 10,
+                        height: smallCanvasSize - 10,
+                        showOutline: true,
+                        showCharacter: true,
+                        drawingWidth: 8
+                    });
+                });
+            }
+
+            // Create writer for first character (works for both single and multiple)
+            createWriterForCurrentChar(canvasSize);
         }
 
         function startHPDrain() {
@@ -596,7 +664,9 @@
         }
 
         function updateHP() {
-            document.getElementById("hp-bar").style.width = hp + "%";
+            const hpPercent = (hp / maxHP) * 100;
+            document.getElementById("hp-bar").style.width = hpPercent + "%";
+            document.getElementById("hp-text").innerText = Math.ceil(hpPercent) + "%";
         }
 
         function generateBeautifulName() {

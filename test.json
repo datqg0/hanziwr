@@ -1,0 +1,55 @@
+{
+  "metadata": {
+    "version": "2.0",
+    "total_characters": 9779,
+    "description": "Comprehensive Chinese Character Dictionary with New HSK 3.0 Difficulty Levels (HSK 1-7)",
+    "difficulty_levels": {
+      "HSK1": "Beginner - Level 1 (~500 words)",
+      "HSK2": "Elementary - Level 2 (~500 additional words)",
+      "HSK3": "Pre-Intermediate - Level 3 (~600 additional words)",
+      "HSK4": "Intermediate - Level 4 (~1200 additional words)",
+      "HSK5": "Upper-Intermediate - Level 5 (~1700 additional words)",
+      "HSK6": "Advanced - Level 6 (~1700 additional words)",
+      "HSK7": "Expert - HSK 7-9 words"
+    }
+  },
+  "characters": [
+    {
+      "id": 9728,
+      "character": "长秘书",
+      "pinyin": "zhǎng",
+      "tone": 0,
+      "meaning": "（mì shū zhǎng chief; head; leader (secretary",
+      "english": "（mì shū zhǎng chief; head; leader (secretary",
+      "strokes": 1,
+      "frequency": 9728,
+      "difficulty": "HSK1",
+      "hsk_level": 6
+    },
+    {
+      "id": 9726,
+      "character": "长秘",
+      "pinyin": "zhǎng",
+      "tone": 0,
+      "meaning": "（mì shū zhǎng chief; head; leader (secretary",
+      "english": "（mì shū zhǎng chief; head; leader (secretary",
+      "strokes": 1,
+      "frequency": 9728,
+      "difficulty": "HSK1",
+      "hsk_level": 6
+    },
+    {
+      "id": 1,
+      "character": "一",
+      "pinyin": "yī",
+      "tone": 1,
+      "meaning": "1",
+      "english": "one",
+      "strokes": 1,
+      "frequency": 1,
+      "difficulty": "HSK1",
+      "hsk_level": 1
+    }
+  ],
+  "note": "This is a representative sample of 9000 characters"
+}
