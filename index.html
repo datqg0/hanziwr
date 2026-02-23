@@ -378,8 +378,8 @@
         let currentCharIndex = 0;
         async function loadDictionary() {
             try {
-                //const response = await fetch('hanzi-dictionary-full.json');
-                const response = await fetch('test.json');
+                const response = await fetch('hanzi-dictionary-full.json');
+                //const response = await fetch('test=.json');
                 if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
 
                 const data = await response.json();
