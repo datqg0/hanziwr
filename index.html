@@ -401,8 +401,8 @@
             document.getElementById("start-screen").classList.add("hidden");
             document.getElementById("game-over-screen").classList.add("hidden");
             await loadDictionary();
-            hp = 100;
-            maxHP = 100;
+            hp = 80;
+            maxHP = 80;
             score = 0;
             updateHP();
             updateScoreHUD();
@@ -553,14 +553,14 @@
 
             // Set HP based on number of characters
             if (currentCharacters.length === 1) {
-                hp = 100;
-                maxHP = 100;
+                hp = 90;
+                maxHP = 90;
             } else if (currentCharacters.length === 2) {
-                hp = 300;
-                maxHP = 300;
+                hp = 170;
+                maxHP = 170;
             } else if (currentCharacters.length === 3) {
-                hp = 400;
-                maxHP = 400;
+                hp = 260;
+                maxHP = 260;
             }
             updateHP();
 
