@@ -56,7 +56,7 @@ async function loadLeaderboard() {
         const loadingElem = document.getElementById("loading");
         const rankTable = document.getElementById("rank-table");
         if (loadingElem) loadingElem.style.display = "none";
-        if (rankTable) rankTable.style.display = "table";
+        if (rankTable) rankTable.classList.remove("hidden");
     } catch (error) {
         console.error("Error fetching leaderboard: ", error);
         const loadingElem = document.getElementById("loading");

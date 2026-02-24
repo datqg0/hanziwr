@@ -27,11 +27,16 @@ function generateToken(s, n) {
 }
 
 async function submitScore() {
+    console.log("Submit Score triggered");
     const name = document.getElementById("player-name").value.trim() || "Anonymous";
     const submitBtn = document.getElementById("submit-btn");
+    const currentScore = parseInt(window.score || 0);
+
+    console.log(`Submitting score: ${currentScore} for player: ${name}`);
 
     if (!firebaseConfig.apiKey.startsWith("YOUR")) {
         if (!db) {
+            console.error("Firebase DB not initialized");
             alert("Firebase not initialized correctly.");
             return;
         }
@@ -40,14 +45,14 @@ async function submitScore() {
             submitBtn.disabled = true;
             submitBtn.innerText = "Submitting...";
 
-            // Variable "score" is global from index.js
             await addDoc(collection(db, "scores"), {
                 name: name,
-                score: parseInt(window.score || 0),
+                score: currentScore,
                 timestamp: serverTimestamp(),
-                token: generateToken(window.score || 0, name)
+                token: generateToken(currentScore, name)
             });
 
+            console.log("Score submitted successfully");
             alert("Lưu điểm thành công vào bảng rank để xem nhé!");
             location.reload();
         } catch (error) {
@@ -57,6 +62,7 @@ async function submitScore() {
             submitBtn.innerText = "Submit Score";
         }
     } else {
+        console.warn("Firebase not configured");
         alert("Firebase not configured. Score was not saved to online leaderboard.");
         location.reload();
     }

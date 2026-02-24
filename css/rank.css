@@ -181,3 +181,7 @@ td {
         font-size: 14px;
     }
 }
+
+.hidden {
+    display: none !important;
+}

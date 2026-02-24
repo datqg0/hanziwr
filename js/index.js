@@ -1,6 +1,6 @@
 let hp = 100;
 let maxHP = 100;
-let score = 0;
+window.score = 0;
 let highScore = localStorage.getItem('hanzi_shooter_high_score') || 0;
 let currentChar = "学";
 let currentCharData = null;
@@ -46,7 +46,7 @@ async function startGame() {
     await loadDictionary();
     hp = 80;
     maxHP = 80;
-    score = 0;
+    window.score = 0;
     updateHP();
     updateScoreHUD();
     await spawnMonster();
@@ -54,14 +54,14 @@ async function startGame() {
 }
 
 function updateScoreHUD() {
-    document.getElementById("score").innerText = score;
+    document.getElementById("score").innerText = window.score;
     document.getElementById("high-score").innerText = highScore;
 }
 
 function addScore(points) {
-    score += points;
-    if (score > highScore) {
-        highScore = score;
+    window.score += points;
+    if (window.score > highScore) {
+        highScore = window.score;
         localStorage.setItem('hanzi_shooter_high_score', highScore);
     }
     updateScoreHUD();
@@ -152,7 +152,7 @@ async function spawnMonster() {
     let pool = defaultChars;
     if (dictionary && dictionary.length > 0) {
         // Determine max HSK level based on score: 0-4: HSK1, 5-9: HSK2, etc.
-        const maxHSKLevel = Math.min(6, Math.floor(score / 5) + 1);
+        const maxHSKLevel = Math.min(6, Math.floor(window.score / 5) + 1);
 
         // Inclusive filtering: include all levels from 1 to maxHSKLevel
         pool = dictionary.filter(char => {
@@ -337,7 +337,7 @@ function gameOver() {
     // Show game over overlay
     const overlay = document.getElementById("game-over-screen");
     overlay.classList.remove("hidden");
-    overlay.querySelector("#final-score-display span").innerText = score;
+    overlay.querySelector("#final-score-display span").innerText = window.score;
 }
 
 window.startGame = startGame;
