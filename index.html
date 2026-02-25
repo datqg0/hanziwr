@@ -25,27 +25,58 @@
     <div id="game-container">
         <!-- Start Screen -->
         <div id="start-screen" class="overlay">
-            <h1>Luyện viết chữ Hán</h1>
-            <button class="menu-btn" onclick="startGame()">PLAY</button>
-            <a href="rank.html" class="secondary-btn">🏆 Bảng xếp hạng</a>
+            <h1 data-i18n="title">Luyện viết chữ Hán</h1>
+
+            <!-- Language Selector -->
+            <div id="language-selector">
+                <button class="flag-btn" onclick="changeLanguage('en')" title="English">
+                    <img src="https://flagcdn.com/w40/gb.png" alt="UK Flag">
+                </button>
+                <button class="flag-btn" onclick="changeLanguage('vi')" title="Tiếng Việt">
+                    <img src="https://flagcdn.com/w40/vn.png" alt="Vietnam Flag">
+                </button>
+                <button class="flag-btn" onclick="changeLanguage('zh')" title="中文">
+                    <img src="https://flagcdn.com/w40/cn.png" alt="China Flag">
+                </button>
+                <button class="flag-btn" onclick="changeLanguage('ko')" title="한국어">
+                    <img src="https://flagcdn.com/w40/kr.png" alt="South Korea Flag">
+                </button>
+                <button class="flag-btn" onclick="changeLanguage('ja')" title="日本語">
+                    <img src="https://flagcdn.com/w40/jp.png" alt="Japan Flag">
+                </button>
+                <button class="flag-btn" onclick="changeLanguage('ru')" title="Русский">
+                    <img src="https://flagcdn.com/w40/ru.png" alt="Russia Flag">
+                </button>
+                <button class="flag-btn" onclick="changeLanguage('es')" title="Español">
+                    <img src="https://flagcdn.com/w40/es.png" alt="Spain Flag">
+                </button>
+                <button class="flag-btn" onclick="changeLanguage('fr')" title="Français">
+                    <img src="https://flagcdn.com/w40/fr.png" alt="France Flag">
+                </button>
+            </div>
+
+            <button class="menu-btn" onclick="startGame()" data-i18n="play">PLAY</button>
+            <a href="rank.html" class="secondary-btn" data-i18n="rank">🏆 Bảng xếp hạng</a>
         </div>
 
         <!-- Game Over Screen -->
         <div id="game-over-screen" class="overlay hidden">
-            <h1 style="color: #ff4444;">💀 GAME OVER</h1>
-            <div id="final-score-display" style="font-size: 24px; margin: 10px;">Score: <span
-                    class="score-value">0</span></div>
-            <div style="margin-top: 20px; font-size: 18px;">Nickname:</div>
+            <h1 style="color: #ff4444;" data-i18n="game_over">💀 GAME OVER</h1>
+            <div id="final-score-display" style="font-size: 24px; margin: 10px;"><span data-i18n="score">Score</span>:
+                <span class="score-value">0</span>
+            </div>
+            <div style="margin-top: 20px; font-size: 18px;" data-i18n="nickname">Nickname:</div>
             <div style="display: flex; align-items: center; justify-content: center; gap: 10px;">
-                <input type="text" id="player-name" placeholder="Enter your name" maxlength="20">
+                <input type="text" id="player-name" data-i18n-placeholder="enter_name" placeholder="Enter your name"
+                    maxlength="20">
                 <button onclick="refreshName()" title="Random Name"
                     style="background: none; border: 1px solid #ffcc00; color: #ffcc00; border-radius: 5px; cursor: pointer; padding: 10px;">🎲</button>
             </div>
-            <button id="submit-btn" class="menu-btn">Submit Score</button>
-            <button class="secondary-btn" onclick="location.reload()">Back to Menu</button>
+            <button id="submit-btn" class="menu-btn" data-i18n="submit_score">Submit Score</button>
+            <button class="secondary-btn" onclick="location.reload()" data-i18n="back_to_menu">Back to Menu</button>
         </div>
 
-        <h1>Luyện viết chữ Hán</h1>
+        <h1 data-i18n="title">Luyện viết chữ Hán</h1>
 
         <div id="hp-bar-container">
             <div id="hp-bar">
@@ -54,8 +85,9 @@
         </div>
 
         <div id="hud">
-            <div>Score: <span id="score" class="score-value">0</span></div>
-            <div>High Score: <span id="high-score" class="score-value">0</span></div>
+            <div><span data-i18n="score">Score</span>: <span id="score" class="score-value">0</span></div>
+            <div><span data-i18n="high_score">High Score</span>: <span id="high-score" class="score-value">0</span>
+            </div>
         </div>
 
         <div id="character-target"></div>

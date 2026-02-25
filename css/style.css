@@ -284,3 +284,91 @@ input[type="text"] {
         padding: 5px 0;
     }
 }
+
+#language-selector {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    /* Important for many flags */
+    gap: 12px;
+    margin: 15px auto;
+    padding: 12px;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    max-width: 90%;
+}
+
+.flag-btn {
+    background: none;
+    border: 2px solid transparent;
+    cursor: pointer;
+    padding: 3px;
+    border-radius: 8px;
+    transition: transform 0.2s, border-color 0.2s, background 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.flag-btn img {
+    width: 36px;
+    /* Laptop/Desktop size */
+    height: auto;
+    border-radius: 4px;
+    display: block;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.flag-btn:hover {
+    transform: scale(1.15);
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.flag-btn.active {
+    border-color: #ffcc00;
+    background: rgba(255, 204, 0, 0.2);
+}
+
+/* Tablet / iPad (768px - 1024px) */
+@media (max-width: 1024px) {
+    .flag-btn img {
+        width: 30px;
+    }
+
+    #language-selector {
+        gap: 10px;
+        padding: 10px;
+    }
+}
+
+/* Mobile Responsive (up to 768px) */
+@media (max-width: 768px) {
+    #language-selector {
+        gap: 8px;
+        margin: 10px auto;
+        padding: 8px;
+        border-radius: 15px;
+    }
+
+    .flag-btn img {
+        width: 26px;
+    }
+}
+
+/* Very small screens (up to 480px) */
+@media (max-width: 480px) {
+    #language-selector {
+        gap: 6px;
+        padding: 6px;
+    }
+
+    .flag-btn img {
+        width: 22px;
+    }
+
+    .flag-btn {
+        padding: 2px;
+    }
+}

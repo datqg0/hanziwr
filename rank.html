@@ -11,16 +11,16 @@
 
 <body>
 
-    <h1>🏆 GLOBAL RANKING</h1>
+    <h1 data-i18n="rank_title">🏆 GLOBAL RANKING</h1>
 
     <div class="leaderboard-container">
-        <div id="loading">Loading scores...</div>
+        <div id="loading" data-i18n="loading">Loading scores...</div>
         <table id="rank-table" class="hidden">
             <thead>
                 <tr>
-                    <th>Rank</th>
-                    <th>Player</th>
-                    <th>Score</th>
+                    <th data-i18n="rank_col">Rank</th>
+                    <th data-i18n="player_col">Player</th>
+                    <th data-i18n="score_col">Score</th>
                 </tr>
             </thead>
             <tbody id="leaderboard-body">
@@ -29,7 +29,7 @@
         </table>
     </div>
 
-    <a href="index.html" class="btn">BACK TO MENU</a>
+    <a href="index.html" class="btn" data-i18n="back_btn">BACK TO MENU</a>
 
     <script type="module" src="js/rank.js"></script>
 </body>

@@ -12,6 +12,33 @@ const firebaseConfig = {
     measurementId: "G-67QE12KPHW"
 };
 
+// --- Localization Logic for Rank Page ---
+let translations = {};
+let currentLang = localStorage.getItem('hanzi_pref_lang') || 'en';
+
+async function initLocalization() {
+    try {
+        const response = await fetch('translations.json');
+        translations = await response.json();
+        applyTranslations();
+    } catch (e) {
+        console.error('Failed to load translations:', e);
+    }
+}
+
+function applyTranslations() {
+    const langData = translations[currentLang] || translations['en'];
+
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (langData[key]) {
+            el.innerText = langData[key];
+        }
+    });
+}
+
+initLocalization();
+
 // Initialize Firebase
 let db;
 try {
@@ -60,6 +87,7 @@ async function loadLeaderboard() {
     } catch (error) {
         console.error("Error fetching leaderboard: ", error);
         const loadingElem = document.getElementById("loading");
-        if (loadingElem) loadingElem.innerText = "Failed to load scores.";
+        const langData = translations[currentLang] || translations['en'];
+        if (loadingElem) loadingElem.innerText = langData.error || "Failed to load scores.";
     }
 }

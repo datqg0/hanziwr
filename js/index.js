@@ -1,3 +1,115 @@
+// --- Localization Logic ---
+let translations = {};
+let currentLang = localStorage.getItem('hanzi_pref_lang') || 'en';
+
+async function initLocalization() {
+    try {
+        const response = await fetch('translations.json');
+        translations = await response.json();
+
+        // If no saved preference, try IP detection
+        if (!localStorage.getItem('hanzi_pref_lang')) {
+            await detectLanguageByIP();
+        }
+
+        applyTranslations();
+    } catch (e) {
+        console.error('Failed to load translations:', e);
+    }
+}
+
+async function detectLanguageByIP() {
+    try {
+        // Using a free IP API to get country code
+        const response = await fetch('https://ipapi.co/json/');
+        const data = await response.json();
+        const country = data.country_code; // e.g., 'VN', 'CN', 'KR', 'JP', 'RU', 'ES'
+
+        const countryMap = {
+            'VN': 'vi',
+            'CN': 'zh',
+            'KR': 'ko',
+            'JP': 'ja',
+            'RU': 'ru',
+            'ES': 'es',
+            'FR': 'fr'
+        };
+
+        if (countryMap[country]) {
+            currentLang = countryMap[country];
+            console.log(`Detected country ${country}, setting language to ${currentLang}`);
+        } else {
+            currentLang = 'en';
+            console.log(`Detected country ${country}, defaulting to English`);
+        }
+    } catch (e) {
+        console.warn('IP detection failed, defaulting to English');
+        currentLang = 'en';
+    }
+}
+
+function applyTranslations() {
+    const langData = translations[currentLang] || translations['en'];
+
+    // Update all elements with data-i18n attribute
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (langData[key]) {
+            el.innerText = langData[key];
+        }
+    });
+
+    // Update placeholders
+    document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+        const key = el.getAttribute('data-i18n-placeholder');
+        if (langData[key]) {
+            el.placeholder = langData[key];
+        }
+    });
+
+    // Update cheering texts global
+    cheeringTexts = langData.cheering || translations['en'].cheering;
+
+    // Update active flag in UI
+    document.querySelectorAll('.flag-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.getAttribute('onclick').includes(`'${currentLang}'`));
+    });
+}
+
+function changeLanguage(lang) {
+    currentLang = lang;
+    localStorage.setItem('hanzi_pref_lang', lang);
+    applyTranslations();
+
+    // If in game, update current status if visible
+    if (currentCharData) {
+        updateGameStatus();
+    }
+}
+
+function updateGameStatus() {
+    if (!currentCharData) return;
+
+    const langData = translations[currentLang] || translations['en'];
+
+    if (currentCharacters.length > 1) {
+        let statusTemplate = langData.chars_left || translations['en'].chars_left;
+        document.getElementById("status").innerText = statusTemplate
+            .replace('{current}', currentCharIndex + 1)
+            .replace('{total}', currentCharacters.length);
+    } else {
+        let statusTemplate = langData.status_hsk || translations['en'].status_hsk;
+        document.getElementById("status").innerText = statusTemplate
+            .replace('{pinyin}', currentCharData.pinyin)
+            .replace('{english}', currentCharData.english);
+    }
+}
+
+window.changeLanguage = changeLanguage;
+
+// Call localization init
+initLocalization();
+
 let hp = 100;
 let maxHP = 100;
 window.score = 0;
@@ -9,7 +121,7 @@ let writer;
 let hpInterval;
 
 // Chữ cổ vũ
-const cheeringTexts = ['Nào chiến thôi!', 'Bạn làm được mà!', 'Go go go!', 'Hãy lên!', 'Cố lên!', 'Bạn làm được!', 'Xuất sắc!', 'Tuyệt vời!', 'Keep going!', 'Crush it!', 'Easy!', 'Bạn đẳng cấp!', 'Thần tốc!', 'Siêu nhân!'];
+let cheeringTexts = ['Nào chiến thôi!', 'Bạn làm được mà!', 'Go go go!', 'Hãy lên!', 'Cố lên!', 'Bạn làm được!', 'Xuất sắc!', 'Tuyệt vời!', 'Keep going!', 'Crush it!', 'Easy!', 'Bạn đẳng cấp!', 'Thần tốc!', 'Siêu nhân!'];
 
 function getRandomCheeringText() {
     return cheeringTexts[Math.floor(Math.random() * cheeringTexts.length)];
@@ -104,7 +216,7 @@ function createWriterForCurrentChar(canvasSize) {
 
             if (currentCharIndex < currentCharacters.length) {
                 // Move to next character - update status and preview
-                document.getElementById("status").innerText = `📖 Chữ ${currentCharIndex + 1}/${currentCharacters.length}`;
+                updateGameStatus();
 
                 // Update highlight in preview grid
                 for (let i = 0; i < currentCharacters.length; i++) {
@@ -192,7 +304,7 @@ async function spawnMonster() {
         currentCharIndex = 0;
     }
 
-    document.getElementById("status").innerText = `📖 ${currentCharData.pinyin} (${currentCharData.english})`;
+    updateGameStatus();
 
     // Set HP based on number of characters
     if (currentCharacters.length === 1) {
@@ -329,7 +441,9 @@ function refreshName() {
 
 function gameOver() {
     clearInterval(hpInterval);
-    document.getElementById("status").innerText = "💀 Game Over!";
+
+    const langData = translations[currentLang] || translations['en'];
+    document.getElementById("status").innerText = `💀 ${langData.game_over || 'Game Over!'}`;
 
     // Suggest a beautiful name
     refreshName();
