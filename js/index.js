@@ -220,12 +220,47 @@ async function validateWord(word) {
     return validChars;
 }
 
+function injectGrid(containerId, size) {
+    const container = document.getElementById(containerId);
+    if (!container) return containerId;
+
+    // Create the SVG grid
+    const svgId = `${containerId}-grid-svg`;
+    container.innerHTML = `
+        <svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" id="${svgId}" style="position: absolute;">
+            <line x1="0" y1="0" x2="${size}" y2="${size}" stroke="#DDD" />
+            <line x1="${size}" y1="0" x2="0" y2="${size}" stroke="#DDD" />
+            <line x1="${size / 2}" y1="0" x2="${size / 2}" y2="${size}" stroke="#DDD" />
+            <line x1="0" y1="${size / 2}" x2="${size}" y2="${size / 2}" stroke="#DDD" />
+            <rect x="0" y="0" width="${size}" height="${size}" fill="none" stroke="#DDD" stroke-width="2" />
+        </svg>
+    `;
+
+    // Create a wrapper for HanziWriter content that sits on top of the grid
+    const writerId = `${containerId}-writer-container`;
+    const writerDiv = document.createElement('div');
+    writerDiv.id = writerId;
+    writerDiv.style.position = 'relative';
+    writerDiv.style.width = `${size}px`;
+    writerDiv.style.height = `${size}px`;
+    container.appendChild(writerDiv);
+
+    return writerId;
+}
+
 function createWriterForCurrentChar(canvasSize) {
     // Clear the writing area
-    document.getElementById("character-target-1").innerHTML = "";
+    const container = document.getElementById("character-target-1");
+    container.innerHTML = "";
+    container.style.position = "relative";
+    container.style.display = "flex";
+    container.style.justifyContent = "center";
+    container.style.alignItems = "center";
 
+    const writerContainerId = injectGrid("character-target-1", canvasSize);
     const currentWriteChar = currentCharacters[currentCharIndex];
-    writer = HanziWriter.create('character-target-1', currentWriteChar, {
+
+    writer = HanziWriter.create(writerContainerId, currentWriteChar, {
         width: canvasSize,
         height: canvasSize,
         showOutline: false,
@@ -379,8 +414,13 @@ async function spawnMonster() {
         charContainer.style.borderRadius = "10px";
         charContainer.style.padding = "0";
         charContainer.style.overflow = "hidden";
+        charContainer.style.position = "relative";
+        charContainer.style.display = "flex";
+        charContainer.style.justifyContent = "center";
+        charContainer.style.alignItems = "center";
 
-        HanziWriter.create('character-target', currentChar, {
+        const writerContainerId = injectGrid("character-target", canvasSize);
+        HanziWriter.create(writerContainerId, currentChar, {
             width: canvasSize,
             height: canvasSize,
             showOutline: true,
@@ -408,14 +448,19 @@ async function spawnMonster() {
             charDiv.style.width = smallCanvasSize + 'px';
             charDiv.style.height = smallCanvasSize + 'px';
             charDiv.style.background = index === currentCharIndex ? '#ffff99' : 'white';
-            charDiv.style.padding = '5px';
             charDiv.style.borderRadius = '5px';
             charDiv.style.border = index === currentCharIndex ? '3px solid #ffcc00' : '1px solid #ccc';
+            charDiv.style.position = "relative";
+            charDiv.style.display = "flex";
+            charDiv.style.justifyContent = "center";
+            charDiv.style.alignItems = "center";
+            charDiv.style.overflow = "hidden";
             gridContainer.appendChild(charDiv);
 
-            HanziWriter.create(`char-preview-${index}`, char, {
-                width: smallCanvasSize - 10,
-                height: smallCanvasSize - 10,
+            const writerContainerId = injectGrid(charDiv.id, smallCanvasSize);
+            HanziWriter.create(writerContainerId, char, {
+                width: smallCanvasSize,
+                height: smallCanvasSize,
                 showOutline: true,
                 showCharacter: true,
                 drawingWidth: 8
