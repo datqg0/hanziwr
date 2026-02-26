@@ -23,6 +23,16 @@
 <body>
 
     <div id="game-container">
+        <!-- Pause Button -->
+        <button id="pause-btn" class="hidden" onclick="togglePause()">⏸️</button>
+
+        <!-- Pause Overlay -->
+        <div id="pause-overlay" class="overlay hidden">
+            <h1 data-i18n="pause">⏸️ Pause</h1>
+            <button class="menu-btn" onclick="togglePause()" data-i18n="resume">▶️ Resume</button>
+            <button class="secondary-btn" onclick="location.reload()" data-i18n="back_to_menu">Back to Menu</button>
+        </div>
+
         <!-- Start Screen -->
         <div id="start-screen" class="overlay">
             <h1 data-i18n="title">Luyện viết chữ Hán</h1>
@@ -89,12 +99,10 @@
             <div><span data-i18n="high_score">High Score</span>: <span id="high-score" class="score-value">0</span>
             </div>
         </div>
-
+        <div id="status"></div>
         <div id="character-target"></div>
 
         <div id="character-target-1"></div>
-
-        <div id="status"></div>
 
     </div>
 

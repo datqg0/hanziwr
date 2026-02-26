@@ -1,11 +1,11 @@
 // --- Localization Logic ---
-let translations = {};
-let currentLang = localStorage.getItem('hanzi_pref_lang') || 'en';
+window.translations = {};
+window.currentLang = localStorage.getItem('hanzi_pref_lang') || 'en';
 
 async function initLocalization() {
     try {
         const response = await fetch('translations.json');
-        translations = await response.json();
+        window.translations = await response.json();
 
         // If no saved preference, try IP detection
         if (!localStorage.getItem('hanzi_pref_lang')) {
@@ -36,20 +36,20 @@ async function detectLanguageByIP() {
         };
 
         if (countryMap[country]) {
-            currentLang = countryMap[country];
-            console.log(`Detected country ${country}, setting language to ${currentLang}`);
+            window.currentLang = countryMap[country];
+            console.log(`Detected country ${country}, setting language to ${window.currentLang}`);
         } else {
-            currentLang = 'en';
+            window.currentLang = 'en';
             console.log(`Detected country ${country}, defaulting to English`);
         }
     } catch (e) {
         console.warn('IP detection failed, defaulting to English');
-        currentLang = 'en';
+        window.currentLang = 'en';
     }
 }
 
 function applyTranslations() {
-    const langData = translations[currentLang] || translations['en'];
+    const langData = window.translations[window.currentLang] || window.translations['en'];
 
     // Update all elements with data-i18n attribute
     document.querySelectorAll('[data-i18n]').forEach(el => {
@@ -58,6 +58,12 @@ function applyTranslations() {
             el.innerText = langData[key];
         }
     });
+
+    // Update active submit button if it exists
+    const submitBtn = document.getElementById("submit-btn");
+    if (submitBtn && langData.submit_score) {
+        submitBtn.innerText = langData.submit_score;
+    }
 
     // Update placeholders
     document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
@@ -68,16 +74,16 @@ function applyTranslations() {
     });
 
     // Update cheering texts global
-    cheeringTexts = langData.cheering || translations['en'].cheering;
+    cheeringTexts = langData.cheering || window.translations['en'].cheering;
 
     // Update active flag in UI
     document.querySelectorAll('.flag-btn').forEach(btn => {
-        btn.classList.toggle('active', btn.getAttribute('onclick').includes(`'${currentLang}'`));
+        btn.classList.toggle('active', btn.getAttribute('onclick').includes(`'${window.currentLang}'`));
     });
 }
 
 function changeLanguage(lang) {
-    currentLang = lang;
+    window.currentLang = lang;
     localStorage.setItem('hanzi_pref_lang', lang);
     applyTranslations();
 
@@ -90,22 +96,39 @@ function changeLanguage(lang) {
 function updateGameStatus() {
     if (!currentCharData) return;
 
-    const langData = translations[currentLang] || translations['en'];
+    const langData = window.translations[window.currentLang] || window.translations['en'];
 
-    if (currentCharacters.length > 1) {
-        let statusTemplate = langData.chars_left || translations['en'].chars_left;
-        document.getElementById("status").innerText = statusTemplate
-            .replace('{current}', currentCharIndex + 1)
-            .replace('{total}', currentCharacters.length);
-    } else {
-        let statusTemplate = langData.status_hsk || translations['en'].status_hsk;
-        document.getElementById("status").innerText = statusTemplate
-            .replace('{pinyin}', currentCharData.pinyin)
-            .replace('{english}', currentCharData.english);
-    }
+    let statusText = (langData.status_hsk || window.translations['en'].status_hsk)
+        .replace('{word}', currentCharData.character)
+        .replace('{pinyin}', currentCharData.pinyin)
+        .replace('{english}', currentCharData.english);
+
+
+    document.getElementById("status").innerText = statusText;
 }
 
 window.changeLanguage = changeLanguage;
+
+function togglePause() {
+    if (hp <= 0) return; // Can't pause if dead
+
+    window.isPaused = !window.isPaused;
+    const pauseOverlay = document.getElementById("pause-overlay");
+    const pauseBtn = document.getElementById("pause-btn");
+    const langData = window.translations[window.currentLang] || window.translations['en'];
+
+    if (window.isPaused) {
+        pauseOverlay.classList.remove("hidden");
+        pauseBtn.innerText = "▶️";
+        if (writer) writer.pauseQuiz();
+    } else {
+        pauseOverlay.classList.add("hidden");
+        pauseBtn.innerText = "⏸️";
+        if (writer) writer.resumeQuiz();
+    }
+}
+
+window.togglePause = togglePause;
 
 // Call localization init
 initLocalization();
@@ -119,6 +142,7 @@ let currentCharData = null;
 let generatedPlayerName = "";
 let writer;
 let hpInterval;
+window.isPaused = false;
 
 // Chữ cổ vũ
 let cheeringTexts = ['Nào chiến thôi!', 'Bạn làm được mà!', 'Go go go!', 'Hãy lên!', 'Cố lên!', 'Bạn làm được!', 'Xuất sắc!', 'Tuyệt vời!', 'Keep going!', 'Crush it!', 'Easy!', 'Bạn đẳng cấp!', 'Thần tốc!', 'Siêu nhân!'];
@@ -155,6 +179,7 @@ async function loadDictionary() {
 async function startGame() {
     document.getElementById("start-screen").classList.add("hidden");
     document.getElementById("game-over-screen").classList.add("hidden");
+    document.getElementById("pause-btn").classList.remove("hidden");
     await loadDictionary();
     hp = 80;
     maxHP = 80;
@@ -405,7 +430,9 @@ async function spawnMonster() {
 function startHPDrain() {
     clearInterval(hpInterval);
     hpInterval = setInterval(() => {
-        reduceHP(1);
+        if (!window.isPaused) {
+            reduceHP(1);
+        }
     }, 300);
 }
 
@@ -441,8 +468,11 @@ function refreshName() {
 
 function gameOver() {
     clearInterval(hpInterval);
+    document.getElementById("pause-btn").classList.add("hidden");
+    document.getElementById("pause-overlay").classList.add("hidden");
+    window.isPaused = false;
 
-    const langData = translations[currentLang] || translations['en'];
+    const langData = window.translations[window.currentLang] || window.translations['en'];
     document.getElementById("status").innerText = `💀 ${langData.game_over || 'Game Over!'}`;
 
     // Suggest a beautiful name

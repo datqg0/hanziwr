@@ -21,7 +21,14 @@
             "Pro level!"
         ],
         "chars_left": "📖 Character {current}/{total}",
-        "status_hsk": "📖 {pinyin} ({english})"
+        "status_hsk": "📖 {word} : {pinyin} ({english})",
+        "pause": "Pause",
+        "resume": "Resume",
+        "submitting": "Submitting...",
+        "score_submitted": "Score submitted successfully!",
+        "submit_error": "Error submitting score. Please try again.",
+        "firebase_init_error": "Firebase not initialized correctly.",
+        "firebase_config_error": "Firebase not configured. Score was not saved to online leaderboard."
     },
     "vi": {
         "title": "Luyện viết chữ Hán",
@@ -45,7 +52,14 @@
             "Bạn đẳng cấp!"
         ],
         "chars_left": "📖 Chữ {current}/{total}",
-        "status_hsk": "📖 {pinyin} ({english})"
+        "status_hsk": "📖 {word} : {pinyin} ({english})",
+        "pause": "⏸️ Tạm dừng",
+        "resume": "▶️ Tiếp tục",
+        "submitting": "Đang gửi...",
+        "score_submitted": "Lưu điểm thành công vào bảng rank để xem nhé!",
+        "submit_error": "Lỗi khi gửi điểm. Vui lòng thử lại.",
+        "firebase_init_error": "Firebase chưa được khởi tạo đúng cách.",
+        "firebase_config_error": "Firebase chưa được cấu hình. Điểm không được lưu vào bảng xếp hạng trực tuyến."
     },
     "zh": {
         "title": "汉字书写练习",
@@ -69,7 +83,14 @@
             "大神级别！"
         ],
         "chars_left": "📖 第 {current}/{total} 个字",
-        "status_hsk": "📖 {pinyin} ({english})"
+        "status_hsk": "📖 {word} : {pinyin} ({english})",
+        "pause": "Pause",
+        "resume": "Resume",
+        "submitting": "提交中...",
+        "score_submitted": "分数提交成功！请到排行榜查看。",
+        "submit_error": "提交分数时出错。请再试一次。",
+        "firebase_init_error": "Firebase 未正确初始化。",
+        "firebase_config_error": "Firebase 未配置。分数未保存到在线排行榜。"
     },
     "ko": {
         "title": "한자 쓰기 연습",
@@ -93,7 +114,14 @@
             "프로 수준!"
         ],
         "chars_left": "📖 글자 {current}/{total}",
-        "status_hsk": "📖 {pinyin} ({english})"
+        "status_hsk": "📖 {word} : {pinyin} ({english})",
+        "pause": "Pause",
+        "resume": "Resume",
+        "submitting": "제출 중...",
+        "score_submitted": "점수가 성공적으로 제출되었습니다! 순위표에서 확인하세요.",
+        "submit_error": "점수 제출 중 오류가 발생했습니다. 다시 시도해 주세요.",
+        "firebase_init_error": "Firebase가 올바르게 초기화되지 않았습니다.",
+        "firebase_config_error": "Firebase가 구성되지 않았습니다. 점수가 온라인 순위표에 저장되지 않았습니다."
     },
     "ja": {
         "title": "漢字書き取り練習",
@@ -117,7 +145,14 @@
             "プロ級！"
         ],
         "chars_left": "📖 漢字 {current}/{total}",
-        "status_hsk": "📖 {pinyin} ({english})"
+        "status_hsk": "📖 {word} : {pinyin} ({english})",
+        "pause": "Pause",
+        "resume": "Resume",
+        "submitting": "送信中...",
+        "score_submitted": "スコアが正常に送信されました！ランキングで確認してください。",
+        "submit_error": "スコアの送信中にエラーが発生しました。もう一度お試しください。",
+        "firebase_init_error": "Firebase が正しく初期化されていません。",
+        "firebase_config_error": "Firebase が設定されていません。スコアはオンラインランキングに保存されませんでした。"
     },
     "ru": {
         "title": "Практика написания ханцзы",
@@ -141,7 +176,14 @@
             "Про-уровень!"
         ],
         "chars_left": "📖 Иероглиф {current}/{total}",
-        "status_hsk": "📖 {pinyin} ({english})"
+        "status_hsk": "📖 {word} : {pinyin} ({english})",
+        "pause": "Pause",
+        "resume": "Resume",
+        "submitting": "Отправка...",
+        "score_submitted": "Счет успешно отправлен! Проверьте его в таблице лидеров.",
+        "submit_error": "Ошибка при отправке счета. Пожалуйста, попробуйте еще раз.",
+        "firebase_init_error": "Firebase инициализирован неправильно.",
+        "firebase_config_error": "Firebase не настроен. Счет не был сохранен в онлайн-таблице лидеров."
     },
     "es": {
         "title": "Práctica de Escritura Hanzi",
@@ -165,13 +207,20 @@
             "¡Nivel Pro!"
         ],
         "chars_left": "📖 Carácter {current}/{total}",
-        "status_hsk": "📖 {pinyin} ({english})",
+        "status_hsk": "📖 {word} : {pinyin} ({english})",
+        "pause": "Pause",
+        "resume": "Resume",
         "rank_title": "🏆 CLASIFICACIÓN GLOBAL",
         "loading": "Cargando puntuaciones...",
         "rank_col": "Rango",
         "player_col": "Jugador",
         "score_col": "Puntos",
-        "back_btn": "VOLVER AL MENÚ"
+        "back_btn": "VOLVER AL MENÚ",
+        "submitting": "Enviando...",
+        "score_submitted": "¡Puntuación enviada con éxito! Compruébala en la clasificación.",
+        "submit_error": "Error al enviar la puntuación. Por favor, inténtalo de nuevo.",
+        "firebase_init_error": "Firebase no se ha inicializado correctamente.",
+        "firebase_config_error": "Firebase không ha sido configurado. La puntuación no se guardó en la clasificación online."
     },
     "fr": {
         "title": "Pratique de l'écriture Hanzi",
@@ -195,12 +244,19 @@
             "Niveau Pro !"
         ],
         "chars_left": "📖 Caractère {current}/{total}",
-        "status_hsk": "📖 {pinyin} ({english})",
+        "status_hsk": "📖 {word} : {pinyin} ({english})",
+        "pause": "Pause",
+        "resume": "Resume",
         "rank_title": "🏆 CLASSEMENT MONDIAL",
         "loading": "Chargement...",
         "rank_col": "Rang",
         "player_col": "Joueur",
         "score_col": "Score",
-        "back_btn": "RETOUR AU MENU"
+        "back_btn": "RETOUR AU MENU",
+        "submitting": "Envoi en cours...",
+        "score_submitted": "Score soumis avec succès ! Consultez-le dans le classement.",
+        "submit_error": "Erreur lors de l'envoi du score. Veuillez réessayer.",
+        "firebase_init_error": "Firebase n'est pas correctement initialisé.",
+        "firebase_config_error": "Firebase n'est pas configuré. Le score n'a pas été enregistré dans le classement en ligne."
     }
 }

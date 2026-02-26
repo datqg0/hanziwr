@@ -134,6 +134,36 @@ input[type="text"] {
     text-align: center;
 }
 
+#pause-btn {
+    position: fixed;
+    top: 15px;
+    left: 15px;
+    z-index: 1001;
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 20px;
+    backdrop-filter: blur(5px);
+    transition: background 0.2s, transform 0.2s;
+}
+
+#pause-btn:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: scale(1.1);
+}
+
+#pause-overlay {
+    background: rgba(0, 0, 0, 0.85);
+    /* Slightly less opaque to see game state */
+}
+
 .hidden {
     display: none !important;
 }

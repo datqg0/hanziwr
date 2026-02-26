@@ -31,19 +31,20 @@ async function submitScore() {
     const name = document.getElementById("player-name").value.trim() || "Anonymous";
     const submitBtn = document.getElementById("submit-btn");
     const currentScore = parseInt(window.score || 0);
+    const langData = window.translations[window.currentLang] || window.translations['en'];
 
     console.log(`Submitting score: ${currentScore} for player: ${name}`);
 
     if (!firebaseConfig.apiKey.startsWith("YOUR")) {
         if (!db) {
             console.error("Firebase DB not initialized");
-            alert("Firebase not initialized correctly.");
+            alert(langData.firebase_init_error || "Firebase not initialized correctly.");
             return;
         }
 
         try {
             submitBtn.disabled = true;
-            submitBtn.innerText = "Submitting...";
+            submitBtn.innerText = langData.submitting || "Submitting...";
 
             await addDoc(collection(db, "scores"), {
                 name: name,
@@ -53,17 +54,17 @@ async function submitScore() {
             });
 
             console.log("Score submitted successfully");
-            alert("Lưu điểm thành công vào bảng rank để xem nhé!");
+            alert(langData.score_submitted || "Score submitted successfully!");
             location.reload();
         } catch (error) {
             console.error("Error adding document: ", error);
-            alert("Error submitting score. Please try again.");
+            alert(langData.submit_error || "Error submitting score. Please try again.");
             submitBtn.disabled = false;
-            submitBtn.innerText = "Submit Score";
+            submitBtn.innerText = langData.submit_score || "Submit Score";
         }
     } else {
         console.warn("Firebase not configured");
-        alert("Firebase not configured. Score was not saved to online leaderboard.");
+        alert(langData.firebase_config_error || "Firebase not configured. Score was not saved to online leaderboard.");
         location.reload();
     }
 }
