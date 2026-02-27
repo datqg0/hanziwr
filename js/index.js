@@ -93,6 +93,19 @@ function changeLanguage(lang) {
     }
 }
 
+function speakCurrentCharacter() {
+    if (!currentCharData) return;
+
+    // Cancel any ongoing speech
+    window.speechSynthesis.cancel();
+
+    const text = currentCharData.character;
+    const speech = new SpeechSynthesisUtterance(text);
+    speech.lang = "zh-CN"; // Mandarin Chinese
+
+    window.speechSynthesis.speak(speech);
+}
+
 function updateGameStatus() {
     if (!currentCharData) return;
 
@@ -103,8 +116,16 @@ function updateGameStatus() {
         .replace('{pinyin}', currentCharData.pinyin)
         .replace('{english}', currentCharData.english);
 
+    const statusEl = document.getElementById("status");
+    statusEl.innerHTML = `<span>${statusText}</span>`;
 
-    document.getElementById("status").innerText = statusText;
+    // Add speaker icon
+    const speakerBtn = document.createElement("button");
+    speakerBtn.className = "speaker-btn";
+    speakerBtn.innerHTML = "🔊";
+    speakerBtn.title = "Listen";
+    speakerBtn.onclick = speakCurrentCharacter;
+    statusEl.appendChild(speakerBtn);
 }
 
 window.changeLanguage = changeLanguage;
@@ -378,6 +399,7 @@ async function spawnMonster() {
         maxHP = 260;
     }
     updateHP();
+    speakCurrentCharacter();
 
     document.getElementById("character-target").innerHTML = "";
     document.getElementById("character-target-1").innerHTML = "";

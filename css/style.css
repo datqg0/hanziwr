@@ -58,6 +58,31 @@ body {
 #status {
     margin-top: 30px;
     font-size: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.speaker-btn {
+    background: none;
+    border: 1px solid #ffcc00;
+    color: #ffcc00;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 16px;
+    transition: transform 0.2s, background 0.2s;
+    flex-shrink: 0;
+}
+
+.speaker-btn:hover {
+    transform: scale(1.1);
+    background: rgba(255, 204, 0, 0.2);
 }
 
 #hud {
